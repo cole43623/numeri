@@ -443,6 +443,7 @@ function trovaTernePitagoriche(c) {
 	for (let base = 2; base <= 16; base++) {
 		output += `Base ${base.toString().padStart(2)}: ${n.toString(base).toUpperCase()}\n`;
 	}
+  output += `Numero Romano: ${decimaleARomano(n)}\n`;
   output += `</pre></div>`;
 
   output += `<div class='section'><h2>Funzioni Aritmetiche</h2><pre>`;
@@ -481,7 +482,6 @@ function trovaTernePitagoriche(c) {
 	let arr = convertToBase(n,b);
     if (arr.every((value, index) => value === arr[arr.length - 1 - index])) output += `Base ${b}: ${arr}\n`;
   }
-  output += `Numero Romano: ${decimaleARomano(n)}\n`;
   output += `</pre></div>`;
 
 	output += `<div class='section'><h2>Terne pitagoriche</h2><pre>`;
