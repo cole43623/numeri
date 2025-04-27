@@ -485,7 +485,7 @@ function trovaTernePitagoriche(c) {
   output += `<pre>`;
   output += n%2===0 ? "- Pari\n" : "- Dispari\n";
   output += `Fattori primi: ${stampaScomposizione(n)}\n`;
-  output += `Divisori: ${divisori.join(", ")}\n`;
+  output += `${divisori.length} Divisori: ${divisori.join(", ")}\n`;
   switch (tipo) {
   case 1:
     output += `<li>È <strong>Difettivo</strong> (somma divisori propri < numero) (${divisori.reduce((a, b) => a + b, 0)-n} &lt; ${n})</li>`;
