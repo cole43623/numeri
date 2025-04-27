@@ -52,6 +52,37 @@ function analyzeNumber() {
 
   function sumDigits(x) { return x.toString().split('').reduce((a,b)=>a+ +b,0); }
 
+function decimaleARomano(num) {
+    if (isNaN(num) || num < 1 || num > 3999) {
+        return "Inserisci un numero tra 1 e 3999";
+    }
+
+    const valori = [
+        { value: 1000, symbol: 'M' },
+        { value: 900, symbol: 'CM' },
+        { value: 500, symbol: 'D' },
+        { value: 400, symbol: 'CD' },
+        { value: 100, symbol: 'C' },
+        { value: 90, symbol: 'XC' },
+        { value: 50, symbol: 'L' },
+        { value: 40, symbol: 'XL' },
+        { value: 10, symbol: 'X' },
+        { value: 9, symbol: 'IX' },
+        { value: 5, symbol: 'V' },
+        { value: 4, symbol: 'IV' },
+        { value: 1, symbol: 'I' }
+    ];
+
+    let risultato = '';
+    for (const { value, symbol } of valori) {
+        while (num >= value) {
+            risultato += symbol;
+            num -= value;
+        }
+    }
+    return risultato;
+}
+
   function mobius(n) {
     if (n == 1) return 1;
     let p = 0;
@@ -392,7 +423,7 @@ function trovaTernePitagoriche(c) {
   output += `<pre>`;
   output += n%2===0 ? "- Pari\n" : "- Dispari\n";
   output += `Fattori primi: ${stampaScomposizione(n)}\n`;
-  output += `Divisori: ${divisors(n).join(", ")}\n`;
+  output += `Divisori: ${divisori.join(", ")}\n`;
   switch (tipo) {
   case 1:
     output += `<li>È <strong>Difettivo</strong> (somma divisori propri < numero) (${divisori.reduce((a, b) => a + b, 0)-n} &lt; ${n})</li>`;
@@ -450,6 +481,7 @@ function trovaTernePitagoriche(c) {
 	let arr = convertToBase(n,b);
     if (arr.every((value, index) => value === arr[arr.length - 1 - index])) output += `Base ${b}: ${arr}\n`;
   }
+  output += `Numero Romano: ${decimaleARomano(n)}\n`;
   output += `</pre></div>`;
 
 	output += `<div class='section'><h2>Terne pitagoriche</h2><pre>`;
