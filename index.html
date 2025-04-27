@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Analisi Numero</title>
+<style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    input, button { padding: 10px; font-size: 20px; }
+    .section { 
+        margin-top: 20px; 
+        padding: 10px; 
+        border: 1px solid #ccc; 
+        border-radius: 8px; 
+        font-size: 22px; /* Aumenta il font qui */
+    }
+    .section h2 { margin-top: 0; }
+    .section pre { 
+        background: #f4f4f4; 
+        padding: 10px; 
+        overflow-x: auto; 
+        font-size: 20px; /* E qui per il pre */
+    }
+</style>
+</head>
+<body>
+  <h1>Analizzatore di Numeri</h1>
+  <input type="number" id="numero" placeholder="Inserisci un numero"/>
+  <button onclick="analyzeNumber()">Analizza</button>
+
+  <div id="output"></div>
+
+<script>
+function analyzeNumber() {
+  const n = parseInt(document.getElementById("numero").value);
+  if (isNaN(n) || n < 1) {
+    document.getElementById("output").innerHTML = "<p>Inserisci un numero intero positivo.</p>";
+    return;
+  }
+
+  let output = "";
+
+  function divisors(n) {
+    const div = [];
+    for (let i = 1; i <= Math.sqrt(n); i++) {
+      if (n % i === 0) {
+        div.push(i);
+        if (n / i !== i) div.push(n / i);
+      }
+    }
+    return div.sort((a, b) => a - b);
+  }
+
+  function sumDigits(x) { return x.toString().split('').reduce((a,b)=>a+ +b,0); }
+
+  function mobius(n) {
+    if (n == 1) return 1;
+    let p = 0;
+	let i = 2;
+    while (i * i <= n) {
+      if (n % i === 0) {
+        if ((n / i) % i === 0) return 0;
+        p++;
+        n /= i;
+      }
+      else i++;
+    }
+    if (n > 1) p++;
+    return (p % 2 === 0) ? 1 : -1;
+  }
+
+  function mertens(N) {
+    let M = 0;
+    for (let i = 1; i <= N; i++) M += mobius(i);
+    return M;
+  }
+
+  function phi(n) {
+    let result = n;
+    for (let p = 2; p * p <= n; p++) {
+      if (n % p === 0) {
+        while (n % p === 0) n /= p;
+        result -= result / p;
+      }
+    }
+    if (n > 1) result -= result / n;
+    return result;
+  }
+
+  function isPrime(n) {
+    if (n < 2) return false;
+    for (let i = 2; i * i <= n; i++) if (n % i === 0) return false;
+    return true;
+  }
+
+  function isSemiprime(n) {
+    let count = 0;
+    for (let i = 2; i <= Math.sqrt(n); i++) {
+      while (n % i === 0) {
+        n /= i;
+        count++;
+      }
+      if (count > 2) return false;
+    }
+    if (n > 1) count++;
+    return count === 2;
+  }
+
+  function isPerfect(n) {
+    const sum = divisors(n).reduce((a,b)=>a+b,0) - n;
+    return sum === n;
+  }
+
+  function isHarshad(n) { return n % sumDigits(n) === 0; }
+
+  function isNontotient(n) {
+    if (n == 1 || n % 2 === 1) return true;
+    for (let x = 1; x <= 2*n; x++) {
+      let count = 0;
+      for (let i = 1; i <= x; i++) {
+        if (gcd(i,x) === 1) count++;
+      }
+      if (count === n) return false;
+    }
+    return true;
+  }
+
+  function gcd(a,b) { return b ? gcd(b,a%b) : a; }
+
+  function isOdious(n) { return n.toString(2).split('1').length % 2 === 0; }
+
+  function isMalvagio(n) { return n.toString(2).split('1').length % 2 !== 0; }
+
+function isFelice(n) {
+    const visti = new Set();
+    while (n !== 1 && !visti.has(n)) {
+        visti.add(n);
+        n = String(n).split('').reduce((sum, cifra) => sum + Math.pow(Number(cifra), 2), 0);
+    }
+    return n === 1;
+}
+
+  function isKaprekar(n) {
+    const sq = (n*n).toString();
+    for (let i = 1; i < sq.length; i++) {
+      const left = parseInt(sq.slice(0, i));
+      const right = parseInt(sq.slice(i));
+      if (right > 0 && left + right === n) return true;
+    }
+    return n === 1;
+  }
+
+function isUlam(n) {
+    let sequence = [1, 2];
+    while (sequence[sequence.length - 1] < n) {
+        let nextUlam = null;
+        for (let i = sequence[sequence.length - 1] + 1; i < n * 2; i++) {
+            let count = 0;
+            let seen = new Set();
+            for (let a of sequence) {
+                if (seen.has(i - a)) {
+                    count++;
+                }
+                seen.add(a);
+            }
+            if (count === 1) {
+                nextUlam = i;
+                break;
+            }
+        }
+        if (nextUlam === null) {
+            break;
+        }
+        sequence.push(nextUlam);
+    }
+    return sequence.includes(n);
+}
+
+  function luckyNumbers(limit) {
+    let numbers = [];
+    for (let i = 1; i <= limit; i+=2) numbers.push(i);
+    let idx = 1;
+    while (idx < numbers.length) {
+      let step = numbers[idx];
+      if (step >= numbers.length) break;
+      numbers = numbers.filter((_,i)=>((i+1)%step)!==0);
+      idx++;
+    }
+    return new Set(numbers);
+  }
+
+  function isLucky(n) { return luckyNumbers(n*2).has(n); }
+
+	function is_deficient(n, sigma) {
+	  if (sigma < n - 1) return 1;
+	  if (sigma == n - 1) return 2;
+	  if (sigma == n) return 3;
+	  return 4;
+	}
+
+function isPractical(n) {
+    // Trova tutti i divisori di n (incluso 1, escluso n)
+    const divisors = [1];
+    for (let i = 2; i < n; i++) {
+        if (n % i === 0) {
+            divisors.push(i);
+        }
+    }
+    divisors.sort((a, b) => a - b);
+
+    // Inizializza l'insieme dei numeri raggiungibili
+    const reachable = new Set([0]);
+
+    // Calcola tutti i numeri raggiungibili
+    for (const d of divisors) {
+        const newReachable = new Set(reachable);
+        for (const x of reachable) {
+            newReachable.add(x + d);
+        }
+        for (const val of newReachable) {
+            reachable.add(val);
+        }
+    }
+
+    // Verifica se tutti i numeri da 1 a n sono raggiungibili
+    for (let x = 1; x <= n; x++) {
+        if (!reachable.has(x)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function isColombian(n) {
+    if (n < 30) {
+        return (n < 10 && n % 2 === 1) || n === 20;
+    }
+    
+    const qd = 1 + Math.floor(Math.log10(n));
+    const r = 1 + (n - 1) % 9;
+    const h = Math.floor((r + 9 * (r % 2)) / 2);
+    let ld = 10;
+    
+    while (h + 9 * qd >= n % ld) {
+        ld *= 10;
+    }
+    
+    const vs = String(Math.floor(n / ld)).split('').reduce((sum, d) => sum + parseInt(d), 0);
+    n %= ld;
+    
+    for (let i = 0; i <= qd; i++) {
+        const current = n - h - 9 * i;
+        const digitSum = String(current).split('').reduce((sum, d) => sum + parseInt(d), 0);
+        if (vs + digitSum === h + 9 * i) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+function sigma(m) {
+    if (m === 1) return 1;
+    let sum = 1 + m;  // 1 and m are always divisors
+    for (let i = 2; i <= Math.sqrt(m); i++) {
+        if (m % i === 0) {
+            if (i === m / i) {
+                sum += i;
+            } else {
+                sum += i + m / i;
+            }
+        }
+    }
+    return sum;
+}
+
+// Memoization cache for f(m)
+const fCache = new Map();
+
+function f(m) {
+    if (fCache.has(m)) {
+        return fCache.get(m);
+    }
+    const result = sigma(m) - m;
+    fCache.set(m, result);
+    return result;
+}
+
+function isIntoccabile(n) {
+    if (n < 2) return false;
+    const limit = (n - 1) ** 2 + 1;
+    for (let m = 1; m < limit; m++) {
+        if (f(m) === n) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function isOmirp(n) {
+    if (!isPrime(n)) {
+        return false;
+    }
+    const reversedN = parseInt(n.toString().split('').reverse().join(''), 10);
+    return n !== reversedN && isPrime(reversedN);
+}
+
+function primeFactors(n) {
+    const factors = {};
+    
+    // Handle 2 separately
+    while (n % 2 === 0) {
+        factors[2] = (factors[2] || 0) + 1;
+        n = n / 2;
+    }
+    
+    // Check odd numbers up to sqrt(n)
+    for (let i = 3; i <= Math.sqrt(n); i += 2) {
+        while (n % i === 0) {
+            factors[i] = (factors[i] || 0) + 1;
+            n = n / i;
+        }
+    }
+    
+    // If remaining n is a prime > 2
+    if (n > 2) {
+        factors[n] = 1;
+    }
+    
+    return factors;
+}
+
+function stampaScomposizione(n) {
+    const factors = primeFactors(n);
+    let output = `${n} = `;
+    
+    if (n === 1) {
+        return "1 = 1"; // Caso speciale per 1
+    }
+
+    const entries = Object.entries(factors).sort((a, b) => a[0] - b[0]);
+    output += entries.map(([factor, exp]) => {
+        return exp > 1 ? `${factor}^${exp}` : `${factor}`;
+    }).join(' × ');
+
+    return output;
+}
+
+function isPotente(n) {
+    if (n === 1) return true;
+    
+    const factors = primeFactors(n);
+    const exponents = Object.values(factors);
+    
+    return exponents.every(exp => exp > 1);
+}
+
+	function convertToBase(n, k) {
+	  if (n === 0) return [0];
+	  const digits = [];
+	  while (n > 0) {
+		digits.push(n % k);
+		n = Math.floor(n / k);
+	  }
+	  return digits.reverse();
+	}
+
+function trovaTernePitagoriche(c) {
+    const terne = [];
+    const quad = c * c;
+
+    for (let a = 1; a < c; a++) {
+        const bQuad = quad - a * a;
+        const b = Math.floor(Math.sqrt(bQuad));
+        if (b >= a && b * b === bQuad) {
+            terne.push([a, b, c].sort((x, y) => x - y));
+        }
+    }
+    for (let a = 1; a < 200000; a++) {
+        const bQuad = quad + a * a;
+        const b = Math.floor(Math.sqrt(bQuad));
+        if (b * b === bQuad) {
+            terne.push([a, c, b].sort((x, y) => x - y));
+        }
+    }
+    
+    return terne;
+}
+
+  let divisori = divisors(n);
+  let tipo = is_deficient(n, divisori.reduce((a, b) => a + b, 0)-n);
+  output += `<div class='section'><h2>Informazioni di Base</h2>`;
+  output += `<pre>`;
+  output += n%2===0 ? "- Pari\n" : "- Dispari\n";
+  output += `Fattori primi: ${stampaScomposizione(n)}\n`;
+  output += `Divisori: ${divisors(n).join(", ")}\n`;
+  switch (tipo) {
+  case 1:
+    output += `<li>È <strong>Difettivo</strong> (somma divisori propri < numero) (${divisori.reduce((a, b) => a + b, 0)-n} &lt; ${n})</li>`;
+    break;
+  case 2:
+    output += `<li>È <strong>Lievemente difettivo</strong> (somma divisori propri = numero - 1) (${divisori.reduce((a, b) => a + b, 0)-n} = ${n}-1)</li>`;
+    break;
+  case 3:
+    output += `<li>È <strong>Perfetto</strong> (somma divisori propri = numero) (${n} = ${n})</li>`;
+    break;
+  case 4:
+    output += `<li>È <strong>Abbondante</strong> (somma divisori propri > numero) (${divisori.reduce((a, b) => a + b, 0)-n} &gt; ${n})</li>`;
+    break;
+  }
+	output += `</pre></div>`;
+	output += `<div class='section'><h2>In altre basi</h2><pre>`;
+	for (let base = 2; base <= 16; base++) {
+		output += `Base ${base.toString().padStart(2)}: ${n.toString(base).toUpperCase()}\n`;
+	}
+  output += `</pre></div>`;
+
+  output += `<div class='section'><h2>Funzioni Aritmetiche</h2><pre>`;
+  output += `Phi: ${phi(n)}\n`;
+  output += `Tau: ${divisors(n).length}\n`;
+  output += `Sigma: ${divisors(n).reduce((a,b)=>a+b,0)}\n`;
+  output += `π(n): ${[...Array(n+1).keys()].filter(isPrime).length}\n`;
+  output += `Mobius μ(n): ${mobius(n)}\n`;
+  output += `Mertens M(n): ${mertens(n)}\n`;
+  output += `</pre></div>`;
+
+  output += `<div class='section'><h2>Proprietà Speciali</h2><pre>`;
+  if (isPrime(n)){ output += `- Numero Primo\n`;
+	if (isPrime(2*n+1)) output += `\t- Numero primo di Sophie Germain\n`;
+	if (isSemiprime(n+2) || isPrime(n+2)) output += `\t- Numero primo di Chen\n`;
+	if (isOmirp(n)) output += `\t- Numero Omirp\n`;
+  }
+  else if (isSemiprime(n)) output += `- Semiprimo\n`;
+  if (isPerfect(n)) output += `- Numero Perfetto\n`;
+  if (isHarshad(n)) output += `- Numero Harshad\n`;
+  if (isNontotient(n)) output += `- Nontotient\n`;
+  if (isOdious(n)) output += `- Odioso\n`;
+  if (isMalvagio(n)) output += `- Malvagio\n`;
+  if (isLucky(n)) output += `- Numero Fortunato\n`;
+  if (isFelice(n)) output += `- Numero Felice\n`;
+  if (isPractical(n)) output += `- Numero Pratico\n`;
+  if (isUlam(n)) output += `- Numero di Ulam\n`;
+  if (isKaprekar(n)) output += `- Numero di Kaprekar\n`;
+  if (isColombian(n)) output += `- Numero colombiano\n`;
+  if (isIntoccabile(n)) output += `- Numero intoccabile\n`;
+  if (isPotente(n)) output += `- Numero potente\n`;
+  output += `</pre></div>`;
+
+  output += `<div class='section'><h2>Palindromi in Basi Diverse</h2><pre>`;
+  for (let b = 2; b < n; b++) {
+	let arr = convertToBase(n,b);
+    if (arr.every((value, index) => value === arr[arr.length - 1 - index])) output += `Base ${b}: ${arr}\n`;
+  }
+  output += `</pre></div>`;
+
+	output += `<div class='section'><h2>Terne pitagoriche</h2><pre>`;
+	const terne = trovaTernePitagoriche(n);
+	if (terne.length > 0) {
+		output += `Fa parte delle seguenti terne pitagoriche:\n`;
+		output += terne.map(terna => `(${terna.join(', ')})`).join('\n');
+	} else {
+		output += `Non fa parte di nessuna terna pitagorica nel range cercato`;
+	}
+	output += `</pre></div>`;
+  document.getElementById("output").innerHTML = output;
+}
+</script>
+
+</body>
+</html>
