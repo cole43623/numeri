@@ -50,6 +50,24 @@ def is_nontotient(n):
 			return False
 	return True
 
+def is_idoneal(n):
+    """
+    Verifica se un numero è idoneo (Euler's numerus idoneus).
+    Un numero è idoneo se NON può essere espresso come:
+    n = ab + ac + bc, con 0 < a < b < c
+    e non è un quadrato perfetto.
+    """
+
+    # Lista completa dei 65 numeri idonei conosciuti (OEIS A000926)
+    known_idoneals = {
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 15, 16, 18, 21, 22, 24, 25, 28, 30, 33, 37, 40, 
+        42, 45, 48, 57, 58, 60, 70, 72, 78, 85, 88, 93, 102, 105, 112, 120, 130, 133, 165, 168, 
+        177, 190, 210, 232, 240, 253, 273, 280, 312, 330, 345, 357, 385, 408, 462, 520, 760, 840, 
+        1320, 1365, 1848
+    }
+    
+    return n in known_idoneals
+	
 def is_odious(n):
 	return bin(n).count('1') % 2 == 1
 
