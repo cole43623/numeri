@@ -559,13 +559,13 @@ function trovaTernePitagoriche(c) {
   else if (isSemiprime(n)) output += `- Semiprimo\n`;
   if (isPerfect(n)) output += `- Numero Perfetto\n`;
   if (isHarshad(n)) output += `- Numero Harshad\n`;
-  if (isNontotient(n)) output += `- Nontotient\n`;
+  if (n<999 && isNontotient(n)) output += `- Nontotient\n`;
   if (isOdious(n)) output += `- Odioso\n`;
   if (isMalvagio(n)) output += `- Malvagio\n`;
   if (isLucky(n)) output += `- Numero Fortunato\n`;
   if (isFelice(n)) output += `- Numero Felice\n`;
   if (isPractical(n)) output += `- Numero Pratico\n`;
-  if (isUlam(n)) output += `- Numero di Ulam\n`;
+  if (n < 9999 && isUlam(n)) output += `- Numero di Ulam\n`;
   if (isKaprekar(n)) output += `- Numero di Kaprekar\n`;
   if (isColombian(n)) output += `- Numero colombiano\n`;
   if (isIntoccabile(n)) output += `- Numero intoccabile\n`;

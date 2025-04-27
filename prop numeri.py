@@ -77,6 +77,7 @@ from functools import cache
 def f(m): return sigma(m)-m
 def is_intoccabile(n):
     if n < 2: return 0
+    return 0
     return not any(f(m) == n for m in range(1, (n-1)**2+1))
 
 def is_malvagio(n):
@@ -144,24 +145,24 @@ def is_fortunato(n):
 	fortunati = genera_numeri_fortunati(n * 2)  # Assicuriamoci di prendere abbastanza numeri
 	return n in fortunati
 	
-def is_ulam(n):
-	sequence = [1, 2]
-	while sequence[-1] < n:
-		next_ulam = None
-		for i in range(sequence[-1]+1, n*2):
-			count = 0
-			seen = set()
-			for a in sequence:
-				if i - a in seen:
-					count += 1
-				seen.add(a)
-			if count == 1:
-				next_ulam = i
-				break
-		if next_ulam is None:
-			break
-		sequence.append(next_ulam)
-	return n in sequence
+def is_ulam(n, sequence=[1, 2]):
+    if n in sequence:
+        return True
+    while sequence[-1] < n:
+        next_candidate = sequence[-1] + 1
+        counts = {}
+        # Pre-calcola tutte le possibili somme a due a due
+        for i in range(len(sequence)):
+            for j in range(i + 1, len(sequence)):
+                s = sequence[i] + sequence[j]
+                if s > sequence[-1]:
+                    counts[s] = counts.get(s, 0) + 1
+        # Trova il minimo s con count == 1
+        next_ulam = min([s for s in counts if counts[s] == 1], default=None)
+        if next_ulam is None:
+            break
+        sequence.append(next_ulam)
+    return n in sequence
 
 
 def trova_terne_pitagoriche(c):
@@ -309,10 +310,11 @@ def analyze_number(n):
 		print("- È Semiprimo (prodotto di due primi)")
 	if is_harshad(n):
 		print("- È Harshad (divisibile per la somma delle cifre)")
-	if is_nontotient(n):
-		print("- È Nontotiente (non è valore di funzione totiente)")
-	else:
-		print("- È Totiente")
+	if n < 9999:
+		if is_nontotient(n):
+			print("- È Nontotiente (non è valore di funzione totiente)")
+		else:
+			print("- È Totiente")
 	if is_odious(n):
 		print("- È Odioso (numero dispari di 1 nel binario)")
 	if is_malvagio(n):
@@ -321,18 +323,25 @@ def analyze_number(n):
 		print("- È Fortunato")
 	if is_felice(n):
 		print("- È Felice")
-	if is_potente(n):
+	print("ok")
+	if 0 and is_potente(n):
 		print("- È un numero potente.")
+	print("ok1")
 	if is_practical(n):
 		print("- È Pratico (tutti i numeri più piccoli sono somme di divisori)")
+	print("ok2")
 	if is_kaprekar(n):
 		print("- È un numero di Kaprekar.")
+	print("ok3")
 	if is_Colombian(n):
 		print("- È un numero colombiano nel sistema numerico decimale.")
+	print("ok4")
 	if is_omirp(n):
 		print("- È Omirp (primo che invertito è ancora primo)")
+	print("ok5")
 	if is_ulam(n):
 		print("- È Ulam (fa parte della sequenza di Ulam)")
+	print("ok6")
 	if is_intoccabile(n):
 		print("- È intoccabile")
 	print("- E palindormo nelle basi:")
