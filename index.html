@@ -545,16 +545,17 @@ function trovaTernePitagoriche(c) {
   output += `Phi: ${phi(n)}\n`;
   output += `Tau: ${divisors(n).length}\n`;
   output += `Sigma: ${divisors(n).reduce((a,b)=>a+b,0)}\n`;
-  output += `π(n): ${[...Array(n+1).keys()].filter(isPrime).length}\n`;
+  if (n<999999){output += `π(n): ${[...Array(n+1).keys()].filter(isPrime).length}\n`;}
   output += `Mobius μ(n): ${mobius(n)}\n`;
-  output += `Mertens M(n): ${mertens(n)}\n`;
+  if (n<999999){output += `Mertens M(n): ${mertens(n)}\n`};
   output += `</pre></div>`;
 
   output += `<div class='section'><h2>Proprietà Speciali</h2><pre>`;
-  if (isPrime(n)){ output += `- Numero Primo\n`;
-	if (isPrime(2*n+1)) output += `\t- Numero primo di Sophie Germain\n`;
-	if (isSemiprime(n+2) || isPrime(n+2)) output += `\t- Numero primo di Chen\n`;
-	if (isOmirp(n)) output += `\t- Numero Omirp\n`;
+  if (isPrime(n)){
+    output += `- Numero Primo\n`;
+    if (isPrime(2*n+1)) output += `\t- Numero primo di Sophie Germain\n`;
+    if (isSemiprime(n+2) || isPrime(n+2)) output += `\t- Numero primo di Chen\n`;
+    if (isOmirp(n)) output += `\t- Numero Omirp\n`;
   }
   else if (isSemiprime(n)) output += `- Semiprimo\n`;
   if (isPerfect(n)) output += `- Numero Perfetto\n`;
@@ -562,7 +563,7 @@ function trovaTernePitagoriche(c) {
   if (n<999 && isNontotient(n)) output += `- Nontotient\n`;
   if (isOdious(n)) output += `- Odioso\n`;
   if (isMalvagio(n)) output += `- Malvagio\n`;
-  if (isLucky(n)) output += `- Numero Fortunato\n`;
+  if (n < 99999 && isLucky(n)) output += `- Numero Fortunato\n`;
   if (isFelice(n)) output += `- Numero Felice\n`;
   if (isPractical(n)) output += `- Numero Pratico\n`;
   if (n < 9999 && isUlam(n)) output += `- Numero di Ulam\n`;
